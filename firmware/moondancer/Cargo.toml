@@ -43,10 +43,10 @@ libgreat = { version = "0.1.1", path = "../libgreat", features = ["errno_minimal
 heapless = { version = "0.8.0", default-features = false, features = ["mpmc_large"] }
 zerocopy = { version = "0.7.34", default-features = false, features = ["derive", "byteorder"] }
 log = { version="=0.4.17", features = ["release_max_level_info"] }
-
 cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
 cortex-m-rt = "0.7"
-imxrt-hal = { version = "0.5.9" }
+imxrt-ral = { version = "*", features = ["imxrt1011"] }
+imxrt-hal = { version = "0.5.9", features = ["imxrt1010"]}
 
 
 # - binaries ------------------------------------------------------------------
