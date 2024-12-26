@@ -2,8 +2,6 @@
 members = [
     "ladybug",
     "libgreat",
-    "lunasoc-hal",
-    "moondancer-pac",
     "moondancer",
     "smolusb",
 ]
