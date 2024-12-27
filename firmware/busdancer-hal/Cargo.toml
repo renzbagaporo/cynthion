@@ -38,7 +38,7 @@ imxrt-ral = { version = "=0.5.4", features = ["imxrt1011"] }
 imxrt-hal = { version = "=0.5.9", features = ["imxrt1010"]}
 log = { version = "=0.4.17", optional = true }
 nb = "=1.1.0"
-cortex-m = { version = "=0.7.7", features = ["critical-section-single-core"] }
+riscv = { version = "=0.7.7", features = ["critical-section-single-core"], package = "cortex-m" }
 smolusb = { version = "0.1.6", path = "../smolusb", optional = true }
 
 
@@ -47,5 +47,5 @@ smolusb = { version = "0.1.6", path = "../smolusb", optional = true }
 [dev-dependencies]
 busdancer-pac = { version = "0.0.1", path = "../busdancer-pac", default-features = false, features = ["critical-section", "rt"]}
 panic-halt = "=0.2.0"
-cortex-m = { version = "=0.7.7", features = ["critical-section-single-core"] }
+riscv = { version = "=0.7.7", features = ["critical-section-single-core"], package = "cortex-m" }
 cortex-m-rt = "=0.7"
