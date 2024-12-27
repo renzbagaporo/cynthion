@@ -1,0 +1,49 @@
+[package]
+name = "busdancer-hal"
+version = "0.0.1"
+authors = ["Renz Bagaporo  <renz.bagaporo@gmail.com>"]
+license = "BSD-3-Clause"
+description = "Moondancer compatibility HAL for BusDancer"
+categories = ["embedded", "hardware-support", "no-std"]
+keywords = ["busdancer", "bsp"]
+edition = "2021"
+rust-version = "1.68"
+
+include = ["examples/**/*", "src/**/*", "README.md", "memory.x"]
+
+[package.metadata.docs.rs]
+default-target = "thumbv7em-none-eabihf"
+targets = [
+    "thumbv7em-none-eabihf",
+]
+
+[lib]
+test = false
+bench = false
+
+# - features ------------------------------------------------------------------
+
+[features]
+# build smolusb hal driver
+usb = [
+    "log",
+    "smolusb",
+]
+
+
+# - dependencies --------------------------------------------------------------
+
+[dependencies]
+log = { version = "=0.4.17", optional = true }
+nb = "=1.1.0"
+smolusb = { version = "0.1.6", path = "../smolusb", optional = true }
+cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
+imxrt-ral = { version = "0.6.1", features = ["imxrt1011"] }
+imxrt-hal = { version = "0.5.9", features = ["imxrt1010"]}
+
+# - dev-dependencies ----------------------------------------------------------
+
+[dev-dependencies]
+cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
+cortex-m-rt = "0.7"
+panic-halt = "=0.2.0"
