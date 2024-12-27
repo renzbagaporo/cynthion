@@ -31,6 +31,6 @@ rt = ["cortex-m-rt"]
 
 [dependencies]
 critical-section = { version = "=1.2.0", optional = true }
-cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
-cortex-m-rt = { version = "0.7", optional =  true }
+cortex-m = { version = "=0.7.7", features = ["critical-section-single-core"] }
+cortex-m-rt = { version = "=0.7", optional =  true }
 vcell = "=0.1.3"

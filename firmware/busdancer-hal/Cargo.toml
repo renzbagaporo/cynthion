@@ -34,16 +34,18 @@ usb = [
 # - dependencies --------------------------------------------------------------
 
 [dependencies]
+imxrt-ral = { version = "=0.5.4", features = ["imxrt1011"] }
+imxrt-hal = { version = "=0.5.9", features = ["imxrt1010"]}
 log = { version = "=0.4.17", optional = true }
 nb = "=1.1.0"
+cortex-m = { version = "=0.7.7", features = ["critical-section-single-core"] }
 smolusb = { version = "0.1.6", path = "../smolusb", optional = true }
-cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
-imxrt-ral = { version = "0.6.1", features = ["imxrt1011"] }
-imxrt-hal = { version = "0.5.9", features = ["imxrt1010"]}
+
 
 # - dev-dependencies ----------------------------------------------------------
 
 [dev-dependencies]
-cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
-cortex-m-rt = "0.7"
+busdancer-pac = { version = "0.0.1", path = "../busdancer-pac", default-features = false, features = ["critical-section", "rt"]}
 panic-halt = "=0.2.0"
+cortex-m = { version = "=0.7.7", features = ["critical-section-single-core"] }
+cortex-m-rt = "=0.7"
