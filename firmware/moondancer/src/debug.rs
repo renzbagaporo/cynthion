@@ -1,6 +1,6 @@
 //! ladybug implementation for cynthion
 //!
-#[cfg(feature = "busdancer")]
+#[cfg(feature = "cynthion_hw")]
 use crate::pac;
 
 #[non_exhaustive]
@@ -30,7 +30,7 @@ impl Bit {
 
 #[allow(clippy::needless_pass_by_value)]
 #[allow(clippy::missing_panics_doc)]
-#[cfg(feature = "busdancer")]
+#[cfg(feature = "cynthion_hw")]
 pub fn init(_gpioa: pac::GPIOA, _gpiob: pac::GPIOB) {
     #[cfg(feature = "ladybug")]
     unsafe {

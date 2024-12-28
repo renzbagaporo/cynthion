@@ -32,7 +32,7 @@ targets = [
 # support for using a logic analyzer and the gpio ports for debugging
 ladybug = ["ladybug/enable"]
 alloc = []
-busdancer = []
+cynthion_hw = []
 
 
 # - dependencies --------------------------------------------------------------

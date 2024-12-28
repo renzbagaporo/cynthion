@@ -19,6 +19,7 @@ use ladybug::Channel;
 #[allow(clippy::cast_possible_truncation)]
 #[allow(clippy::too_many_lines)]
 pub fn get_usb_interrupt_event() -> InterruptEvent {
+    
     use crate::UsbInterface::{Aux, Control, Target};
 
     let usb0 = unsafe { hal::Usb0::summon() }; // target

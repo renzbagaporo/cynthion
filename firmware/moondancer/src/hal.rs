@@ -11,7 +11,7 @@ lunasoc_hal::impl_serial! {
     Serial1: pac::UART1,
 }
 
-#[cfg(feature = "busdancer")]
+#[cfg(feature = "cynthion_hw")]
 lunasoc_hal::impl_timer! {
     Timer0: pac::TIMER,
 }
@@ -25,6 +25,7 @@ use lunasoc_hal::smolusb::traits::{
     WriteEndpoint,
 };
 use lunasoc_hal::usb::DEFAULT_TIMEOUT;
+
 lunasoc_hal::impl_usb! {
     Usb0: usb0, pac::USB0, pac::USB0_EP_CONTROL, pac::USB0_EP_IN, pac::USB0_EP_OUT,
     Usb1: usb1, pac::USB1, pac::USB1_EP_CONTROL, pac::USB1_EP_IN, pac::USB1_EP_OUT,
