@@ -23,6 +23,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
     use crate::UsbInterface::{Aux, Control, Target};
 
     let usb0 = unsafe { hal::Usb0::summon() }; // target
+    #[cfg(feature = "cynthion_hw")]
     let usb1 = unsafe { hal::Usb1::summon() }; // aux
     let usb2 = unsafe { hal::Usb2::summon() }; // control
 
@@ -97,6 +98,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         // - usb1 interrupts - "aux_phy" (host on r0.4) --
 
         // USB1 BusReset
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB1 => {
             usb1.controller
                 .ev_pending()
@@ -108,6 +110,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         }
 
         // USB1_EP_CONTROL ReceiveSetupPacket
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB1_EP_CONTROL => {
             usb1.ep_control
                 .ev_pending()
@@ -129,6 +132,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         }
 
         // USB1_EP_IN SendComplete
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB1_EP_IN => {
             usb1.ep_in
                 .ev_pending()
@@ -143,6 +147,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         }
 
         // USB1_EP_OUT ReceivePacket}
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB1_EP_OUT => {
             usb1.ep_out
                 .ev_pending()
