@@ -6,6 +6,8 @@ lunasoc_hal::impl_gpio! {
     Gpio0: pac::GPIOA,
 }
 
+
+#[cfg(feature = "cynthion_hw")]
 lunasoc_hal::impl_serial! {
     Serial0: pac::UART,
     Serial1: pac::UART1,

@@ -1,12 +1,15 @@
 //! A simple logger for Cynthion's serial ports.
 
+#[cfg(feature = "cynthion_hw")]
 use core::fmt::Write;
 use core::ptr::addr_of_mut;
 
 use log::{Level, LevelFilter, Metadata, Record};
 
+#[cfg(feature = "cynthion_hw")]
 use hal::hal::serial::Write as _;
 
+#[cfg(feature = "cynthion_hw")]
 use crate::hal;
 
 // - initialization -----------------------------------------------------------
@@ -90,6 +93,7 @@ impl log::Log for CynthionLogger {
             return;
         }
 
+        #[cfg(feature = "cynthion_hw")]
         match self.port {
             Port::Uart0 => {
                 let mut writer = unsafe { hal::Serial0::summon() };
@@ -109,6 +113,7 @@ impl log::Log for CynthionLogger {
     }
 
     fn flush(&self) {
+        #[cfg(feature = "cynthion_hw")]
         match self.port {
             Port::Uart0 => {
                 let mut writer = unsafe { hal::Serial0::summon() };
