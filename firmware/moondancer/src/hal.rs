@@ -1,6 +1,7 @@
 pub use crate::pac;
 pub use lunasoc_hal::*;
 
+#[cfg(feature = "ladybug")]
 lunasoc_hal::impl_gpio! {
     Gpio0: pac::GPIOA,
 }

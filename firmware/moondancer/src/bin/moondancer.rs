@@ -136,6 +136,7 @@ impl<'a> Firmware<'a> {
         info!("Logging initialized");
 
         // initialize ladybug
+        #[cfg(feature = "busdancer")]
         moondancer::debug::init(peripherals.GPIOA, peripherals.GPIOB);
 
         // get Cynthion SPI Flash uuid from the SoC
