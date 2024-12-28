@@ -11,9 +11,11 @@ lunasoc_hal::impl_serial! {
     Serial1: pac::UART1,
 }
 
+#[cfg(feature = "busdancer")]
 lunasoc_hal::impl_timer! {
     Timer0: pac::TIMER,
 }
+
 
 pub use lunasoc_hal::smolusb;
 use lunasoc_hal::smolusb::device::Speed;
