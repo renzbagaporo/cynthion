@@ -1,6 +1,7 @@
 use crate::hal::smolusb;
 use pac::csr::interrupt;
 
+#[cfg(feature = "cynthion_hw")]
 use libgreat::GreatError;
 
 use smolusb::event::UsbEvent;
@@ -346,6 +347,7 @@ impl MultiEventQueue {
 }
 
 /// Reads Cynthion's SPI Flash UUID
+#[cfg(feature = "cynthion_hw")]
 pub fn read_flash_uuid(spi0: &pac::SPI0) -> Result<[u8; 8], GreatError> {
     // FIXME wait for things to settle
     unsafe {
@@ -404,6 +406,7 @@ pub fn read_flash_uuid(spi0: &pac::SPI0) -> Result<[u8; 8], GreatError> {
 
     Ok(ret)
 }
+
 
 /// Formats a buffer containing a flash uuid into a String
 #[must_use]

@@ -138,9 +138,13 @@ impl<'a> Firmware<'a> {
         // initialize ladybug
         #[cfg(feature = "cynthion_hw")]
         moondancer::debug::init(peripherals.GPIOA, peripherals.GPIOB);
+        
 
         // get Cynthion SPI Flash uuid from the SoC
+        let uuid = [0, 0, 0, 0, 0, 0, 0, 0];
+        #[cfg(feature = "cynthion_hw")]
         let uuid = util::read_flash_uuid(&peripherals.SPI0).unwrap_or([0_u8; 8]);
+
         let uuid = util::format_flash_uuid(uuid);
 
         // build string descriptor table
