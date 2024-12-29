@@ -17,9 +17,5 @@ fn rustc_target() -> Option<String> {
 }
 
 fn target_has_atomic(target: &str) -> bool {
-    match target {
-        "riscv32imac-unknown-none-elf" => true,
-        "riscv32i-unknown-none-elf" => false,
-        _ => false,
-    }
+    true
 }
