@@ -19,12 +19,12 @@ use ladybug::Channel;
 #[must_use]
 #[allow(clippy::cast_possible_truncation)]
 #[allow(clippy::too_many_lines)]
+#[cfg(feature = "cynthion_hw")]
 pub fn get_usb_interrupt_event() -> InterruptEvent {
     
     use crate::UsbInterface::{Aux, Control, Target};
 
     let usb0 = unsafe { hal::Usb0::summon() }; // target
-    #[cfg(feature = "cynthion_hw")]
     let usb1 = unsafe { hal::Usb1::summon() }; // aux
     let usb2 = unsafe { hal::Usb2::summon() }; // control
 
@@ -220,6 +220,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         _ => InterruptEvent::UnhandledInterrupt(pending),
     }
 }
+
 
 // - multi event queue --------------------------------------------------------
 

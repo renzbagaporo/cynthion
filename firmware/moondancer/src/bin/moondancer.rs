@@ -49,7 +49,9 @@ fn dispatch_event(event: InterruptEvent) {
 #[allow(non_snake_case)]
 #[no_mangle]
 extern "C" fn MachineExternal() {
+    #[cfg(feature = "cynthion_hw")]
     let event = moondancer::util::get_usb_interrupt_event();
+    #[cfg(feature = "cynthion_hw")]
     dispatch_event(event);
 }
 

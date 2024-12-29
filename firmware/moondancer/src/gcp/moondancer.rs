@@ -54,6 +54,7 @@ use heapless::Vec;
 
 /// Moondancer
 pub struct Moondancer {
+    #[cfg(feature = "cynthion_hw")]
     usb0: hal::Usb0,
     quirk_flags: u16,
     ep_in_max_packet_size: [u16; smolusb::EP_MAX_ENDPOINTS],
@@ -66,8 +67,12 @@ pub struct Moondancer {
 
 impl Moondancer {
     #[must_use]
-    pub fn new(usb0: hal::Usb0) -> Self {
+    pub fn new(
+        #[cfg(feature = "cynthion_hw")]
+        usb0: hal::Usb0
+    ) -> Self {
         Self {
+            #[cfg(feature = "cynthion_hw")]
             usb0,
             quirk_flags: 0,
             ep_in_max_packet_size: [0; smolusb::EP_MAX_ENDPOINTS],
@@ -112,6 +117,7 @@ impl Moondancer {
                     self.pending_set_address = Some(address);
 
                     // send ZLP to host to end status stage
+                    #[cfg(feature = "cynthion_hw")]
                     self.usb0.ack(endpoint_number, Direction::HostToDevice);
                     return;
                 }
@@ -134,6 +140,7 @@ impl Moondancer {
             UsbEvent::SendComplete(_endpoint_number) => {
                 // catch EP_IN SendComplete after SetAddress ack
                 if let Some(address) = self.pending_set_address.take() {
+                    #[cfg(feature = "cynthion_hw")]
                     self.usb0.set_address(address);
                     return;
                 }
@@ -146,6 +153,10 @@ impl Moondancer {
                 // drain FIFO
                 let mut rx_buffer: [u8; smolusb::EP_MAX_PACKET_SIZE] =
                     [0; smolusb::EP_MAX_PACKET_SIZE];
+
+                let bytes_read = 0;
+
+                #[cfg(feature = "cynthion_hw")]
                 let bytes_read = self.usb0.read(endpoint_number, &mut rx_buffer);
 
                 // create Packet
@@ -202,6 +213,8 @@ impl Moondancer {
     /// This function operates directly on the CPU's Machine IRQ Mask
     /// register. It is not interrupt-safe and any pending interrupts
     /// may be dropped when calling it.
+    /// 
+    #[cfg(feature = "cynthion_hw")]
     pub unsafe fn enable_usb_interrupts(&self) {
         interrupt::enable(pac::Interrupt::USB0);
         interrupt::enable(pac::Interrupt::USB0_EP_CONTROL);
@@ -212,6 +225,10 @@ impl Moondancer {
         self.usb0.enable_events();
     }
 
+    #[cfg(not(feature = "cynthion_hw"))]
+    pub unsafe fn enable_usb_interrupts(&self) {
+    }
+
     /// Disable USB events and CPU interrupts for the USB controller.
     ///
     /// # Safety
@@ -219,6 +236,8 @@ impl Moondancer {
     /// This function operates directly on the CPU's Machine IRQ Mask
     /// register. It is not interrupt-safe and any pending interrupts
     /// may be dropped when calling it.
+    /// 
+    #[cfg(feature = "cynthion_hw")]
     pub unsafe fn disable_usb_interrupts(&self) {
         // disable all usb events
         self.usb0.disable_events();
@@ -227,6 +246,10 @@ impl Moondancer {
         interrupt::disable(pac::Interrupt::USB0_EP_CONTROL);
         interrupt::disable(pac::Interrupt::USB0_EP_IN);
         interrupt::disable(pac::Interrupt::USB0_EP_OUT);
+    }
+
+    #[cfg(not(feature = "cynthion_hw"))]
+    pub unsafe fn disable_usb_interrupts(&self) {
     }
 }
 
@@ -252,6 +275,7 @@ impl Moondancer {
         self.quirk_flags = quirk_flags;
 
         // connect usb0 device and enable interrupts
+        #[cfg(feature = "cynthion_hw")]
         self.usb0.connect(device_speed);
         unsafe { self.enable_usb_interrupts() };
 
@@ -259,6 +283,10 @@ impl Moondancer {
         unsafe {
             riscv::asm::delay(20_000_000);
         }
+
+        let speed = 0;
+
+        #[cfg(feature = "cynthion_hw")]
         let speed: Speed = self.usb0.controller.speed().read().speed().bits().into();
 
         log::info!("Moondancer connected {:?}-speed device to host.", speed);
@@ -275,6 +303,8 @@ impl Moondancer {
     pub fn disconnect(&mut self, _arguments: &[u8]) -> GreatResult<impl Iterator<Item = u8>> {
         // disable interrupts and disconnect USB interface
         unsafe { self.disable_usb_interrupts() };
+
+        #[cfg(feature = "cynthion_hw")]
         self.usb0.disconnect();
 
         // reset connection state
@@ -340,9 +370,11 @@ impl Moondancer {
         let _deferred = args.deferred != 0;
 
         // activate new address
+        #[cfg(feature = "cynthion_hw")]
         self.usb0.set_address(address);
 
         // ack status
+        #[cfg(feature = "cynthion_hw")]
         self.usb0.ack(0, Direction::HostToDevice);
 
         trace!(
@@ -419,6 +451,8 @@ impl Moondancer {
                     "  priming HostToDevice (OUT) endpoint address: {}",
                     endpoint.address
                 );
+
+                #[cfg(feature = "cynthion_hw")]
                 self.usb0.ep_out_prime_receive(endpoint_number);
             }
         }
@@ -438,6 +472,7 @@ impl Moondancer {
         let endpoint_number = args.endpoint_number;
 
         // stall IN end
+        #[cfg(feature = "cynthion_hw")]
         self.usb0.stall_endpoint_in(endpoint_number);
 
         log::debug!("MD moondancer::stall_endpoint_in({})", args.endpoint_number);
@@ -456,6 +491,7 @@ impl Moondancer {
         let endpoint_number = args.endpoint_number;
 
         // stall OUT end
+        #[cfg(feature = "cynthion_hw")]
         self.usb0.stall_endpoint_out(endpoint_number);
 
         log::debug!(
@@ -485,6 +521,7 @@ impl Moondancer {
         };
 
         // Clear feature endpoint halt
+        #[cfg(feature = "cynthion_hw")]
         self.usb0
             .clear_feature_endpoint_halt(endpoint_number, direction);
 
@@ -577,6 +614,7 @@ impl Moondancer {
         }
         let args = Args::read_from(arguments).ok_or(GreatError::InvalidArgument)?;
 
+        #[cfg(feature = "cynthion_hw")]
         self.usb0.ep_out_prime_receive(args.endpoint_number);
 
         debug!(
@@ -592,12 +630,14 @@ impl Moondancer {
         _arguments: &[u8],
     ) -> GreatResult<impl Iterator<Item = u8>> {
         // 0. clear receive fifo in case the previous transaction wasn't handled
+        #[cfg(feature = "cynthion_hw")]
         if self.usb0.ep_out.have().read().have().bit() {
             log::warn!("Re-enabling interface with unread data: Usb0");
             self.usb0.ep_out.reset().write(|w| w.reset().bit(true));
         }
 
         // 1. re-enable ep_out interface
+        #[cfg(feature = "cynthion_hw")]
         self.usb0.ep_out.enable().write(|w| w.enable().bit(true));
 
         debug!("MD moondancer::ep_out_interface_enable()");
@@ -636,6 +676,8 @@ impl Moondancer {
         let iter = args.payload.iter();
         let max_packet_size = self.ep_in_max_packet_size[endpoint_number as usize] as usize;
 
+        let bytes_written = 0;
+        #[cfg(feature = "cynthion_hw")]
         let bytes_written = self.usb0.write_requested(
             endpoint_number,
             requested_length.into(),
@@ -644,9 +686,15 @@ impl Moondancer {
 
         // wait for send to complete if we're blocking
         let mut timeout = 0;
-        while blocking & unsafe { self.usb0.is_tx_ack_active(endpoint_number) } {
+        let active = false;
+        #[cfg(feature = "cynthion_hw")]
+        let active = & unsafe { self.usb0.is_tx_ack_active(endpoint_number) };
+
+        while blocking & active
+        {
             timeout += 1;
             if timeout > hal::usb::DEFAULT_TIMEOUT {
+                #[cfg(feature = "cynthion_hw")]
                 unsafe {
                     self.usb0.clear_tx_ack_active(endpoint_number);
                 }
@@ -696,12 +744,14 @@ impl Moondancer {
         let iter = args.payload.iter();
         let max_packet_size = self.ep_in_max_packet_size[endpoint_number as usize] as usize;
 
+        #[cfg(feature = "cynthion_hw")]
         unsafe {
             self.usb0.set_tx_ack_active(endpoint_number);
         }
 
         // check if output FIFO is empty
         let mut timeout = 0;
+        #[cfg(feature = "cynthion_hw")]
         while self.usb0.ep_in.have().read().have().bit() {
             if timeout == 0 {
                 warn!("  moondancer clear tx ep{}", endpoint_number);
@@ -718,6 +768,7 @@ impl Moondancer {
 
         // write data out to EP_IN, splitting into packets of max_packet_size
         let mut bytes_written: usize = 0;
+        #[cfg(feature = "cynthion_hw")]
         for byte in iter {
             self.usb0
                 .ep_in
@@ -765,6 +816,7 @@ impl Moondancer {
         // Facedancer has taken responsibility for splitting the
         // packets up. We probably need two moondancer write methods
         // to be honest.
+        #[cfg(feature = "cynthion_hw")]
         if bytes_written != max_packet_size {
             unsafe {
                 self.usb0.set_tx_ack_active(endpoint_number);
@@ -777,6 +829,7 @@ impl Moondancer {
 
         // wait for send to complete if we're blocking
         let mut timeout = 0;
+        #[cfg(feature = "cynthion_hw")]
         while blocking & unsafe { self.usb0.is_tx_ack_active(endpoint_number) } {
             timeout += 1;
             if timeout > hal::usb::DEFAULT_TIMEOUT {
@@ -884,6 +937,8 @@ impl Moondancer {
     ///
     /// bitmask
     pub fn get_nak_status(&mut self, _arguments: &[u8]) -> GreatResult<impl Iterator<Item = u8>> {
+        let nak_status: u16 = 0;
+        #[cfg(feature = "cynthion_hw")]
         let nak_status = (self.usb0.ep_in.nak().read().bits() & 0xffff) as u16;
         Ok(nak_status.to_le_bytes().into_iter())
     }
