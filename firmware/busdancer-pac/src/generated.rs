@@ -1043,136 +1043,136 @@ pub use self::interrupt::Interrupt;
 // pub mod info;
 // #[no_mangle]
 // static mut DEVICE_PERIPHERALS: bool = false;
-// #[doc = r" All the peripherals."]
-// #[allow(non_snake_case)]
-// pub struct Peripherals {
-//     #[doc = "TIMER"]
-//     pub TIMER: TIMER,
-//     #[doc = "UART"]
-//     pub UART: UART,
-//     #[doc = "SPI0"]
-//     pub SPI0: SPI0,
-//     #[doc = "LEDS"]
-//     pub LEDS: LEDS,
-//     #[doc = "GPIOA"]
-//     pub GPIOA: GPIOA,
-//     #[doc = "GPIOB"]
-//     pub GPIOB: GPIOB,
-//     #[doc = "USB0"]
-//     pub USB0: USB0,
-//     #[doc = "USB0_EP_CONTROL"]
-//     pub USB0_EP_CONTROL: USB0_EP_CONTROL,
-//     #[doc = "USB0_EP_IN"]
-//     pub USB0_EP_IN: USB0_EP_IN,
-//     #[doc = "USB0_EP_OUT"]
-//     pub USB0_EP_OUT: USB0_EP_OUT,
-//     #[doc = "USB1"]
-//     pub USB1: USB1,
-//     #[doc = "USB1_EP_CONTROL"]
-//     pub USB1_EP_CONTROL: USB1_EP_CONTROL,
-//     #[doc = "USB1_EP_IN"]
-//     pub USB1_EP_IN: USB1_EP_IN,
-//     #[doc = "USB1_EP_OUT"]
-//     pub USB1_EP_OUT: USB1_EP_OUT,
-//     #[doc = "USB2"]
-//     pub USB2: USB2,
-//     #[doc = "USB2_EP_CONTROL"]
-//     pub USB2_EP_CONTROL: USB2_EP_CONTROL,
-//     #[doc = "USB2_EP_IN"]
-//     pub USB2_EP_IN: USB2_EP_IN,
-//     #[doc = "USB2_EP_OUT"]
-//     pub USB2_EP_OUT: USB2_EP_OUT,
-//     #[doc = "UART1"]
-//     pub UART1: UART1,
-//     #[doc = "ADVERTISER"]
-//     pub ADVERTISER: ADVERTISER,
-//     #[doc = "INFO"]
-//     pub INFO: INFO,
-// }
-// impl Peripherals {
-//     #[doc = r" Returns all the peripherals *once*."]
-//     #[cfg(feature = "critical-section")]
-//     #[inline]
-//     pub fn take() -> Option<Self> {
-//         critical_section::with(|_| {
-//             if unsafe { DEVICE_PERIPHERALS } {
-//                 return None;
-//             }
-//             Some(unsafe { Peripherals::steal() })
-//         })
-//     }
-//     #[doc = r" Unchecked version of `Peripherals::take`."]
-//     #[doc = r""]
-//     #[doc = r" # Safety"]
-//     #[doc = r""]
-//     #[doc = r" Each of the returned peripherals must be used at most once."]
-//     #[inline]
-//     pub unsafe fn steal() -> Self {
-//         DEVICE_PERIPHERALS = true;
-//         Peripherals {
-//             TIMER: TIMER {
-//                 _marker: PhantomData,
-//             },
-//             UART: UART {
-//                 _marker: PhantomData,
-//             },
-//             SPI0: SPI0 {
-//                 _marker: PhantomData,
-//             },
-//             LEDS: LEDS {
-//                 _marker: PhantomData,
-//             },
-//             GPIOA: GPIOA {
-//                 _marker: PhantomData,
-//             },
-//             GPIOB: GPIOB {
-//                 _marker: PhantomData,
-//             },
-//             USB0: USB0 {
-//                 _marker: PhantomData,
-//             },
-//             USB0_EP_CONTROL: USB0_EP_CONTROL {
-//                 _marker: PhantomData,
-//             },
-//             USB0_EP_IN: USB0_EP_IN {
-//                 _marker: PhantomData,
-//             },
-//             USB0_EP_OUT: USB0_EP_OUT {
-//                 _marker: PhantomData,
-//             },
-//             USB1: USB1 {
-//                 _marker: PhantomData,
-//             },
-//             USB1_EP_CONTROL: USB1_EP_CONTROL {
-//                 _marker: PhantomData,
-//             },
-//             USB1_EP_IN: USB1_EP_IN {
-//                 _marker: PhantomData,
-//             },
-//             USB1_EP_OUT: USB1_EP_OUT {
-//                 _marker: PhantomData,
-//             },
-//             USB2: USB2 {
-//                 _marker: PhantomData,
-//             },
-//             USB2_EP_CONTROL: USB2_EP_CONTROL {
-//                 _marker: PhantomData,
-//             },
-//             USB2_EP_IN: USB2_EP_IN {
-//                 _marker: PhantomData,
-//             },
-//             USB2_EP_OUT: USB2_EP_OUT {
-//                 _marker: PhantomData,
-//             },
-//             UART1: UART1 {
-//                 _marker: PhantomData,
-//             },
-//             ADVERTISER: ADVERTISER {
-//                 _marker: PhantomData,
-//             },
-//             INFO: INFO {
-//                 _marker: PhantomData,
-//             },
-//         }
-//     }
-// }
+#[doc = r" All the peripherals."]
+#[allow(non_snake_case)]
+pub struct Peripherals {
+    // #[doc = "TIMER"]
+    // pub TIMER: TIMER,
+    // #[doc = "UART"]
+    // pub UART: UART,
+    // #[doc = "SPI0"]
+    // pub SPI0: SPI0,
+    // #[doc = "LEDS"]
+    // pub LEDS: LEDS,
+    // #[doc = "GPIOA"]
+    // pub GPIOA: GPIOA,
+    // #[doc = "GPIOB"]
+    // pub GPIOB: GPIOB,
+    // #[doc = "USB0"]
+    // pub USB0: USB0,
+    // #[doc = "USB0_EP_CONTROL"]
+    // pub USB0_EP_CONTROL: USB0_EP_CONTROL,
+    // #[doc = "USB0_EP_IN"]
+    // pub USB0_EP_IN: USB0_EP_IN,
+    // #[doc = "USB0_EP_OUT"]
+    // pub USB0_EP_OUT: USB0_EP_OUT,
+    // #[doc = "USB1"]
+    // pub USB1: USB1,
+    // #[doc = "USB1_EP_CONTROL"]
+    // pub USB1_EP_CONTROL: USB1_EP_CONTROL,
+    // #[doc = "USB1_EP_IN"]
+    // pub USB1_EP_IN: USB1_EP_IN,
+    // #[doc = "USB1_EP_OUT"]
+    // pub USB1_EP_OUT: USB1_EP_OUT,
+    // #[doc = "USB2"]
+    // pub USB2: USB2,
+    // #[doc = "USB2_EP_CONTROL"]
+    // pub USB2_EP_CONTROL: USB2_EP_CONTROL,
+    // #[doc = "USB2_EP_IN"]
+    // pub USB2_EP_IN: USB2_EP_IN,
+    // #[doc = "USB2_EP_OUT"]
+    // pub USB2_EP_OUT: USB2_EP_OUT,
+    // #[doc = "UART1"]
+    // pub UART1: UART1,
+    // #[doc = "ADVERTISER"]
+    // pub ADVERTISER: ADVERTISER,
+    // #[doc = "INFO"]
+    // pub INFO: INFO,
+}
+impl Peripherals {
+    #[doc = r" Returns all the peripherals *once*."]
+    #[cfg(feature = "critical-section")]
+    #[inline]
+    pub fn take() -> Option<Self> {
+        critical_section::with(|_| {
+            if unsafe { DEVICE_PERIPHERALS } {
+                return None;
+            }
+            Some(unsafe { Peripherals::steal() })
+        })
+    }
+    #[doc = r" Unchecked version of `Peripherals::take`."]
+    #[doc = r""]
+    #[doc = r" # Safety"]
+    #[doc = r""]
+    #[doc = r" Each of the returned peripherals must be used at most once."]
+    #[inline]
+    pub unsafe fn steal() -> Self {
+        // DEVICE_PERIPHERALS = true;
+        Peripherals {
+        //     TIMER: TIMER {
+        //         _marker: PhantomData,
+        //     },
+        //     UART: UART {
+        //         _marker: PhantomData,
+        //     },
+        //     SPI0: SPI0 {
+        //         _marker: PhantomData,
+        //     },
+        //     LEDS: LEDS {
+        //         _marker: PhantomData,
+        //     },
+        //     GPIOA: GPIOA {
+        //         _marker: PhantomData,
+        //     },
+        //     GPIOB: GPIOB {
+        //         _marker: PhantomData,
+        //     },
+        //     USB0: USB0 {
+        //         _marker: PhantomData,
+        //     },
+        //     USB0_EP_CONTROL: USB0_EP_CONTROL {
+        //         _marker: PhantomData,
+        //     },
+        //     USB0_EP_IN: USB0_EP_IN {
+        //         _marker: PhantomData,
+        //     },
+        //     USB0_EP_OUT: USB0_EP_OUT {
+        //         _marker: PhantomData,
+        //     },
+        //     USB1: USB1 {
+        //         _marker: PhantomData,
+        //     },
+        //     USB1_EP_CONTROL: USB1_EP_CONTROL {
+        //         _marker: PhantomData,
+        //     },
+        //     USB1_EP_IN: USB1_EP_IN {
+        //         _marker: PhantomData,
+        //     },
+        //     USB1_EP_OUT: USB1_EP_OUT {
+        //         _marker: PhantomData,
+        //     },
+        //     USB2: USB2 {
+        //         _marker: PhantomData,
+        //     },
+        //     USB2_EP_CONTROL: USB2_EP_CONTROL {
+        //         _marker: PhantomData,
+        //     },
+        //     USB2_EP_IN: USB2_EP_IN {
+        //         _marker: PhantomData,
+        //     },
+        //     USB2_EP_OUT: USB2_EP_OUT {
+        //         _marker: PhantomData,
+        //     },
+        //     UART1: UART1 {
+        //         _marker: PhantomData,
+        //     },
+        //     ADVERTISER: ADVERTISER {
+        //         _marker: PhantomData,
+        //     },
+        //     INFO: INFO {
+        //         _marker: PhantomData,
+        //     },
+        }
+    }
+}

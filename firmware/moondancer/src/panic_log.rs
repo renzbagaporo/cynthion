@@ -11,7 +11,9 @@ use log::error;
 extern "Rust" fn panic(_panic_info: &PanicInfo) -> ! {
     // panic stations
     let peripherals = unsafe { crate::pac::Peripherals::steal() };
+    #[cfg(feature = "cynthion_hw")]
     let leds = &peripherals.LEDS;
+    #[cfg(feature = "cynthion_hw")]
     leds.output()
         .write(|w| unsafe { w.output().bits(0b10_1010) });
 
