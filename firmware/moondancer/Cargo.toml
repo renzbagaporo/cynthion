@@ -48,6 +48,7 @@ smolusb = { version = "0.1.6", path = "../smolusb"}
 lunasoc_hal = {version = "0.0.1", path = "../busdancer-hal", package="busdancer-hal", default-features = false, features = ["usb"]}
 moondancer_pac = {version = "0.0.1", path = "../busdancer-pac", package="busdancer-pac"}
 riscv = { version = "=0.7.7", features = ["critical-section-single-core"], package = "cortex-m" }
+riscv-rt = { version = "=0.7", package = "cortex-m-rt" }
 
 
 # - binaries ------------------------------------------------------------------

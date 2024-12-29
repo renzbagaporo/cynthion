@@ -87,10 +87,14 @@ fn main() -> ! {
 
 struct Firmware<'a> {
     // peripherals
+    #[cfg(feature = "cynthion_hw")]
     leds: pac::LEDS,
+
+    #[cfg(feature = "cynthion_hw")]
     usb2: hal::Usb2,
 
     // usb2 control endpoint
+    #[cfg(feature = "cynthion_hw")]
     usb2_control: Control<'a, hal::Usb2, LIBGREAT_MAX_COMMAND_SIZE>,
 
     // state
@@ -118,12 +122,20 @@ impl<'a> Firmware<'a> {
         let classes = libgreat::gcp::Classes(&CLASSES);
 
         // enable ApolloAdvertiser to disconnect the Cynthion USB2 control port from Apollo
+        #[cfg(feature = "cynthion_hw")]
         let advertiser = peripherals.ADVERTISER;
+        #[cfg(feature = "cynthion_hw")]
         advertiser.enable().write(|w| w.enable().bit(true));
 
         // get Cynthion hardware revision information from the SoC
+        let board_major = 0;
+        let board_minor = 0;
+
+        #[cfg(feature = "cynthion_hw")]
         let info = &peripherals.INFO;
+        #[cfg(feature = "cynthion_hw")]
         let board_major = info.version_major().read().bits() as u8;
+        #[cfg(feature = "cynthion_hw")]
         let board_minor = info.version_minor().read().bits() as u8;
 
         // initialize logging
@@ -175,6 +187,7 @@ impl<'a> Firmware<'a> {
         };
 
         // usb2: control (host on r0.4)
+        #[cfg(feature = "cynthion_hw")]
         let usb2 = hal::Usb2::new(
             peripherals.USB2,
             peripherals.USB2_EP_CONTROL,
@@ -183,6 +196,7 @@ impl<'a> Firmware<'a> {
         );
 
         // usb0: target
+        #[cfg(feature = "cynthion_hw")]
         let usb0 = hal::Usb0::new(
             peripherals.USB0,
             peripherals.USB0_EP_CONTROL,
@@ -193,6 +207,7 @@ impl<'a> Firmware<'a> {
         // format bcdDevice
         let bcd_device: u16 = u16::from_be_bytes([board_major, board_minor]);
 
+        #[cfg(feature = "cynthion_hw")]
         let usb2_control = Control::<_, LIBGREAT_MAX_COMMAND_SIZE>::new(
             0,
             Descriptors {
@@ -222,11 +237,18 @@ impl<'a> Firmware<'a> {
 
         // initialize libgreat classes
         let core = libgreat::gcp::class_core::Core::new(classes, moondancer::BOARD_INFORMATION);
-        let moondancer = moondancer::gcp::moondancer::Moondancer::new(usb0);
+
+        let moondancer = moondancer::gcp::moondancer::Moondancer::new(
+            #[cfg(feature = "cynthion_hw")]
+            usb0
+        );
 
         Self {
+            #[cfg(feature = "cynthion_hw")]
             leds: peripherals.LEDS,
+            #[cfg(feature = "cynthion_hw")]
             usb2,
+            #[cfg(feature = "cynthion_hw")]
             usb2_control,
             libgreat_response: None,
             libgreat_response_last_error: None,
@@ -238,11 +260,13 @@ impl<'a> Firmware<'a> {
 
     fn initialize(&mut self) -> GreatResult<()> {
         // leds: starting up
+        #[cfg(feature = "cynthion_hw")]
         self.leds
             .output()
             .write(|w| unsafe { w.output().bits(1 << 2) });
 
         // connect usb2
+        #[cfg(feature = "cynthion_hw")]
         self.usb2.connect(DEVICE_SPEED);
         info!("Connected usb2 device");
 
@@ -252,6 +276,7 @@ impl<'a> Firmware<'a> {
             riscv::interrupt::enable();
 
             // set mie register: machine external interrupts enable
+            #[cfg(feature = "cynthion_hw")]
             riscv::register::mie::set_mext();
 
             // write csr: enable usb2 interrupts
@@ -261,6 +286,7 @@ impl<'a> Firmware<'a> {
             interrupt::enable(pac::Interrupt::USB2_EP_OUT);
 
             // enable usb2 interrupt events
+            #[cfg(feature = "cynthion_hw")]
             self.usb2.enable_events();
         }
 
@@ -281,6 +307,7 @@ impl<'a> Firmware<'a> {
 
         loop {
             // leds: main loop is responsive, interrupts are firing
+            #[cfg(feature = "cynthion_hw")]
             self.leds
                 .output()
                 .write(|w| unsafe { w.output().bits((counter % 0xff) as u8) });
@@ -302,6 +329,7 @@ impl<'a> Firmware<'a> {
                 queue_length += 1;
 
                 // leds: event loop is active
+                #[cfg(feature = "cynthion_hw")]
                 self.leds
                     .output()
                     .write(|w| unsafe { w.output().bits(1 << 0) });
@@ -324,6 +352,7 @@ impl<'a> Firmware<'a> {
                         | SendComplete(0)),
                     ) => {
                         trace!("Usb(Control, {:?})", event);
+                        #[cfg(feature = "cynthion_hw")]
                         if let Some(setup_packet) =
                             self.usb2_control.dispatch_event(&self.usb2, event)
                         {
@@ -371,11 +400,14 @@ impl<'a> Firmware<'a> {
             // handle apollo stub interface requests
             (RequestType::Vendor, Recipient::Interface, VendorRequest::ApolloClaimInterface) => {
                 // send zlp
+                #[cfg(feature = "cynthion_hw")]
                 self.usb2.write(0, [].into_iter());
 
                 // allow apollo to claim Cynthion's control port
                 info!("Releasing Cynthion USB Control Port and activating Apollo");
+                #[cfg(feature = "cynthion_hw")]
                 let advertiser = unsafe { pac::ADVERTISER::steal() };
+                #[cfg(feature = "cynthion_hw")]
                 advertiser.enable().write(|w| w.enable().bit(false));
             }
 
@@ -383,6 +415,7 @@ impl<'a> Firmware<'a> {
             (RequestType::Vendor, _, VendorRequest::UsbCommandRequest) => {
                 match (&vendor_value, &direction) {
                     // host is starting a new command sequence
+                    #[cfg(feature = "cynthion_hw")]
                     (VendorValue::Execute, Direction::HostToDevice) => {
                         trace!("  GOT COMMAND data:{:?}", self.usb2_control.data());
                         self.dispatch_libgreat_request()?;
@@ -405,6 +438,7 @@ impl<'a> Firmware<'a> {
                             "handle_vendor_request stall: unknown vendor request and/or value direction{:?} vendor_request{:?} vendor_value:{:?}",
                             direction, vendor_request, vendor_value
                         );
+                        #[cfg(feature = "cynthion_hw")]
                         match direction {
                             Direction::HostToDevice => self.usb2.stall_endpoint_out(0),
                             Direction::DeviceToHost => self.usb2.stall_endpoint_in(0),
@@ -417,6 +451,7 @@ impl<'a> Firmware<'a> {
                     "handle_vendor_request Unknown vendor request '{}'",
                     vendor_request
                 );
+                #[cfg(feature = "cynthion_hw")]
                 match direction {
                     Direction::HostToDevice => self.usb2.stall_endpoint_out(0),
                     Direction::DeviceToHost => self.usb2.stall_endpoint_in(0),
@@ -431,6 +466,7 @@ impl<'a> Firmware<'a> {
 
                 // The greatfet board scan code expects the IN endpoint
                 // to be stalled if this is not a legacy device.
+                #[cfg(feature = "cynthion_hw")]
                 self.usb2.stall_endpoint_in(0);
 
                 warn!("handle_vendor_request Legacy libgreat vendor request");
@@ -440,6 +476,7 @@ impl<'a> Firmware<'a> {
                     "handle_vendor_request Unknown vendor request: '{:?}'",
                     setup_packet
                 );
+                #[cfg(feature = "cynthion_hw")]
                 match direction {
                     Direction::HostToDevice => self.usb2.stall_endpoint_out(0),
                     Direction::DeviceToHost => self.usb2.stall_endpoint_in(0),
@@ -455,67 +492,71 @@ impl<'a> Firmware<'a> {
 
 impl<'a> Firmware<'a> {
     fn dispatch_libgreat_request(&mut self) -> GreatResult<()> {
-        let command_buffer = self.usb2_control.data();
+        
+        // let command_buffer:[u8] = [0, 1, 2, 3];
+        // #[cfg(feature = "cynthion_hw")]
+        // let command_buffer = self.usb2_control.data();
 
-        // parse command
-        let (class_id, verb_number, arguments) = match libgreat::gcp::Command::parse(command_buffer)
-        {
-            Some(command) => (command.class_id(), command.verb_number(), command.arguments),
-            None => {
-                error!("dispatch_libgreat_request failed to parse libgreat command");
-                return Ok(());
-            }
-        };
+        // // parse command
+        // let (class_id, verb_number, arguments) = match libgreat::gcp::Command::parse(command_buffer)
+        // {
+        //     Some(command) => (command.class_id(), command.verb_number(), command.arguments),
+        //     None => {
+        //         error!("dispatch_libgreat_request failed to parse libgreat command");
+        //         return Ok(());
+        //     }
+        // };
 
-        // dispatch command
-        let response_buffer: [u8; LIBGREAT_MAX_COMMAND_SIZE] = [0; LIBGREAT_MAX_COMMAND_SIZE];
-        let response = match class_id {
-            // class: core
-            libgreat::gcp::ClassId::core => {
-                self.core.dispatch(verb_number, arguments, response_buffer)
-            }
-            // class: firmware
-            libgreat::gcp::ClassId::firmware => {
-                moondancer::gcp::firmware::dispatch(verb_number, arguments, response_buffer)
-            }
-            // class: selftest
-            libgreat::gcp::ClassId::selftest => {
-                moondancer::gcp::selftest::dispatch(verb_number, arguments, response_buffer)
-            }
-            // class: moondancer
-            libgreat::gcp::ClassId::moondancer => {
-                self.moondancer
-                    .dispatch(verb_number, arguments, response_buffer)
-            }
-            // class: unsupported
-            _ => {
-                error!(
-                    "dispatch_libgreat_request error: Class id '{:?}' not found",
-                    class_id
-                );
-                Err(GreatError::InvalidArgument)
-            }
-        };
+        // // dispatch command
+        // let response_buffer: [u8; LIBGREAT_MAX_COMMAND_SIZE] = [0; LIBGREAT_MAX_COMMAND_SIZE];
+        // let response = match class_id {
+        //     // class: core
+        //     libgreat::gcp::ClassId::core => {
+        //         self.core.dispatch(verb_number, arguments, response_buffer)
+        //     }
+        //     // class: firmware
+        //     libgreat::gcp::ClassId::firmware => {
+        //         moondancer::gcp::firmware::dispatch(verb_number, arguments, response_buffer)
+        //     }
+        //     // class: selftest
+        //     libgreat::gcp::ClassId::selftest => {
+        //         moondancer::gcp::selftest::dispatch(verb_number, arguments, response_buffer)
+        //     }
+        //     // class: moondancer
+        //     libgreat::gcp::ClassId::moondancer => {
+        //         self.moondancer
+        //             .dispatch(verb_number, arguments, response_buffer)
+        //     }
+        //     // class: unsupported
+        //     _ => {
+        //         error!(
+        //             "dispatch_libgreat_request error: Class id '{:?}' not found",
+        //             class_id
+        //         );
+        //         Err(GreatError::InvalidArgument)
+        //     }
+        // };
 
-        // queue response
-        match response {
-            Ok(response) => {
-                self.libgreat_response = Some(response);
-                self.libgreat_response_last_error = None;
-            }
-            Err(e) => {
-                error!(
-                    "dispatch_libgreat_request error: failed to dispatch command {:?} 0x{:X} {}",
-                    class_id, verb_number, e
-                );
+        // // queue response
+        // match response {
+        //     Ok(response) => {
+        //         self.libgreat_response = Some(response);
+        //         self.libgreat_response_last_error = None;
+        //     }
+        //     Err(e) => {
+        //         error!(
+        //             "dispatch_libgreat_request error: failed to dispatch command {:?} 0x{:X} {}",
+        //             class_id, verb_number, e
+        //         );
 
-                self.libgreat_response = None;
-                self.libgreat_response_last_error = Some(e);
+        //         self.libgreat_response = None;
+        //         self.libgreat_response_last_error = Some(e);
 
-                // stall endpoint to trigger dispatch_libgreat_abort from control host
-                self.usb2.stall_endpoint_in(0);
-            }
-        }
+        //         // stall endpoint to trigger dispatch_libgreat_abort from control host
+        //         #[cfg(feature = "cynthion_hw")]
+        //         self.usb2.stall_endpoint_in(0);
+        //     }
+        // }
 
         Ok(())
     }
@@ -526,9 +567,11 @@ impl<'a> Firmware<'a> {
         // do we have a response ready?
         if let Some(response) = &mut self.libgreat_response {
             // prime to receive host zlp
+            #[cfg(feature = "cynthion_hw")]
             self.usb2.ep_out_prime_receive(0);
 
             // send response
+            #[cfg(feature = "cynthion_hw")]
             self.usb2.write_requested(0, requested_length, response);
 
             // clear any queued responses
@@ -538,6 +581,7 @@ impl<'a> Firmware<'a> {
             warn!("dispatch_libgreat_response error result: {:?}", error);
 
         } else {
+            #[cfg(feature = "cynthion_hw")]
             self.usb2.stall_endpoint_in(0);
             error!("dispatch_libgreat_response stall: libgreat response requested but no response or error queued");
         }
@@ -549,13 +593,16 @@ impl<'a> Firmware<'a> {
         let requested_length = setup_packet.length as usize;
 
         // prime to receive host zlp
+        #[cfg(feature = "cynthion_hw")]
         self.usb2.ep_out_prime_receive(0);
 
         // send error response
         if let Some(error) = self.libgreat_response_last_error {
+            #[cfg(feature = "cynthion_hw")]
             self.usb2.write_requested(0, requested_length, (error as u32).to_le_bytes().into_iter());
             warn!("dispatch_libgreat_abort: {:?}", error);
         } else {
+            #[cfg(feature = "cynthion_hw")]
             self.usb2.write_requested(0, requested_length, (GreatError::StateNotRecoverable as u32).to_le_bytes().into_iter());
             warn!("dispatch_libgreat_abort: libgreat abort requested but no error queued");
         }

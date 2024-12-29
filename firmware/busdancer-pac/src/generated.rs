@@ -1091,15 +1091,9 @@ pub struct Peripherals {
 }
 impl Peripherals {
     #[doc = r" Returns all the peripherals *once*."]
-    #[cfg(feature = "critical-section")]
     #[inline]
     pub fn take() -> Option<Self> {
-        critical_section::with(|_| {
-            if unsafe { DEVICE_PERIPHERALS } {
-                return None;
-            }
-            Some(unsafe { Peripherals::steal() })
-        })
+        Some(unsafe { Peripherals::steal() })
     }
     #[doc = r" Unchecked version of `Peripherals::take`."]
     #[doc = r""]
