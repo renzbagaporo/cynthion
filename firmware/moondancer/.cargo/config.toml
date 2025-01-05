@@ -1,10 +1,12 @@
-[target.thumbv7em-none-eabihf]
-runner = ".cargo/cynthion.sh"
-#runner = "riscv64-unknown-elf-gdb -q -x .cargo/openocd.gdb"
-rustflags = [
-  # "-C", "link-arg=-Tmemory.x",
-  # "-C", "link-arg=-Tlink.x",
-]
-
 [build]
 target = "thumbv7em-none-eabihf"
+
+[target.thumbv7em-none-eabihf]
+rustflags = [
+    "-C", "link-arg=-Timxrt-link.x",
+    "-C", "link-arg=-error-limit=0",
+    "-C", "link-arg=-nmagic",
+]
+runner = "probe-rs run --chip=mimxrt1010"
+
+

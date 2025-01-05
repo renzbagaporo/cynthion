@@ -2,12 +2,16 @@
 #![allow(clippy::inline_always)]
 #![allow(clippy::must_use_candidate)]
 
+use imxrt_rt as _;
+
 // modules
 pub mod gpio;
 pub mod serial;
 pub mod timer;
 #[cfg(feature = "usb")]
 pub mod usb;
+
+pub mod fcb;
 
 // re-export dependencies
 #[cfg(feature = "usb")]

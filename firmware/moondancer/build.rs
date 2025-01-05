@@ -1,21 +1,18 @@
-use std::env;
-use std::str;
+//! This build script prepares the HAL build.
 
-fn main() {
-    // TODO Tracking Issue: https://github.com/rust-lang/rust/issues/94039
-    let Some(target) = rustc_target() else { return };
-    if target_has_atomic(&target) {
-        println!("cargo:rustc-cfg=target_has_atomic");
-    }
+use imxrt_rt::{Family, Memory, RuntimeBuilder};
 
-    println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed=memory.x");
-}
-
-fn rustc_target() -> Option<String> {
-    env::var("TARGET").ok()
-}
-
-fn target_has_atomic(target: &str) -> bool {
-    true
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    RuntimeBuilder::from_flexspi(Family::Imxrt1010, 16 * 1024 * 1024)
+        .flexram_banks(imxrt_rt::FlexRamBanks {
+            ocram: 1,
+            itcm: 2,
+            dtcm: 1,
+        })
+        .uninit(Memory::Dtcm)
+        .stack_size(16 * 1024)
+        .build()?;
+    println!("cargo:rustc-cfg=board=\"imxrt1010evk\"");
+    println!("cargo:rustc-cfg=chip=\"imxrt1010\"");
+    return Ok(());
 }
