@@ -1,0 +1,1 @@
+cargo embed --chip=mimxrt1010
