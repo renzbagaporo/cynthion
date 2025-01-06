@@ -10,7 +10,7 @@ use log::error;
 #[panic_handler]
 extern "Rust" fn panic(_panic_info: &PanicInfo) -> ! {
     // panic stations
-    let peripherals = unsafe { crate::pac::Peripherals::steal() };
+    let peripherals = unsafe { crate::pac::Peripherals::take() };
     #[cfg(feature = "cynthion_hw")]
     let leds = &peripherals.LEDS;
     #[cfg(feature = "cynthion_hw")]
