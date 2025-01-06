@@ -7,6 +7,7 @@ macro_rules! impl_serial {
         $SERIALX:ident: $PACUARTX:ty,
     )+) => {
         $(
+            #[derive(Debug)]
             pub struct $SERIALX {
                 registers: $PACUARTX,
             }
@@ -39,6 +40,15 @@ macro_rules! impl_serial {
             impl From<$PACUARTX> for $SERIALX {
                 fn from(registers: $PACUARTX) -> $SERIALX {
                     $SERIALX::new(registers)
+                }
+            }
+
+            // trait: core::fmt::Write
+            impl core::fmt::Write for $SERIALX {
+                fn write_str(&mut self, s: &str) -> core::fmt::Result {
+                    use $crate::hal::serial::Write;
+                    self.write(s.as_bytes()).ok();
+                    Ok(())
                 }
             }
 

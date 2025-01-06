@@ -21,6 +21,12 @@ impl UART {
     }
 }
 
+impl core::fmt::Debug for UART {
+    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+        f.debug_struct("UART").finish()
+    }
+}
+
 pub struct Peripherals(pub imxrt_ral::Instances);
 
 impl Peripherals {

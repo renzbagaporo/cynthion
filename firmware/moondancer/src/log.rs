@@ -1,15 +1,12 @@
 //! A simple logger for Cynthion's serial ports.
 
-#[cfg(feature = "cynthion_hw")]
 use core::fmt::Write;
 use core::ptr::addr_of_mut;
 
 use log::{Level, LevelFilter, Metadata, Record};
 
-#[cfg(feature = "cynthion_hw")]
 use hal::hal::serial::Write as _;
 
-#[cfg(feature = "cynthion_hw")]
 use crate::hal;
 
 // - initialization -----------------------------------------------------------
@@ -57,6 +54,7 @@ pub fn set_port(port: Port) {
 
 pub enum Port {
     Uart0,
+    #[cfg(feature = "cynthion_hw")]
     Uart1,
     Both,
 }
@@ -93,12 +91,12 @@ impl log::Log for CynthionLogger {
             return;
         }
 
-        #[cfg(feature = "cynthion_hw")]
         match self.port {
             Port::Uart0 => {
                 let mut writer = unsafe { hal::Serial0::summon() };
                 writeln!(writer, "{}\t{}", record.level(), record.args()).unwrap_or(());
             }
+            #[cfg(feature = "cynthion_hw")]
             Port::Uart1 => {
                 let mut writer = unsafe { hal::Serial1::summon() };
                 writeln!(writer, "{}\t{}", record.level(), record.args()).unwrap_or(());
@@ -106,19 +104,21 @@ impl log::Log for CynthionLogger {
             Port::Both => {
                 let mut writer = unsafe { hal::Serial0::summon() };
                 writeln!(writer, "{}\t{}", record.level(), record.args()).unwrap_or(());
+                #[cfg(feature = "cynthion_hw")]
                 let mut writer = unsafe { hal::Serial1::summon() };
+                #[cfg(feature = "cynthion_hw")]
                 writeln!(writer, "{}\t{}", record.level(), record.args()).unwrap_or(());
             }
         }
     }
 
     fn flush(&self) {
-        #[cfg(feature = "cynthion_hw")]
         match self.port {
             Port::Uart0 => {
                 let mut writer = unsafe { hal::Serial0::summon() };
                 writer.flush().ok();
             }
+            #[cfg(feature = "cynthion_hw")]
             Port::Uart1 => {
                 let mut writer = unsafe { hal::Serial1::summon() };
                 writer.flush().ok();
@@ -126,7 +126,9 @@ impl log::Log for CynthionLogger {
             Port::Both => {
                 let mut writer = unsafe { hal::Serial0::summon() };
                 writer.flush().ok();
+                #[cfg(feature = "cynthion_hw")]
                 let mut writer = unsafe { hal::Serial1::summon() };
+                #[cfg(feature = "cynthion_hw")]
                 writer.flush().ok();
             }
         }
