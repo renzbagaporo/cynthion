@@ -11,5 +11,17 @@ pub mod clock {
     }
 }
 
-mod generated;
-pub use generated::*;
+pub use imxrt_ral::{interrupt, Interrupt, NVIC_PRIO_BITS};
+
+pub struct Peripherals(pub imxrt_ral::Instances);
+impl Peripherals {
+    #[inline]
+    pub const unsafe fn steal() -> Self {
+        Self(imxrt_ral::Instances::instances())
+    }
+}
+
+
+
+// mod generated;
+// pub use generated::*;

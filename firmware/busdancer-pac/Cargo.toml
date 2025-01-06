@@ -17,6 +17,10 @@ targets = [
     "thumbv7em-none-eabihf",
 ]
 
+[dependencies.imxrt-ral]
+version = "0.6"
+features = ["imxrt1011"]
+
 [lib]
 test = false
 bench = false

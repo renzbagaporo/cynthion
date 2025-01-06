@@ -117,7 +117,9 @@ fn main() -> ! {
     ral::modify_reg!(ral::pit, pit, MCR, MDIS: MDIS_0);
 
     // initialize firmware
+    #[cfg(feature = "cynthion_hw")]
     let mut firmware = Firmware::new(pac::Peripherals::take().unwrap());
+    #[cfg(feature = "cynthion_hw")]
     match firmware.initialize() {
         Ok(()) => (),
         Err(e) => {
@@ -145,9 +147,12 @@ fn main() -> ! {
     }
 
     // enter main loop
+    #[cfg(feature = "cynthion_hw")]
     let e = firmware.main_loop();
 
     // panic!
+
+    #[cfg(feature = "cynthion_hw")]
     panic!("Firmware exited unexpectedly in main loop: {:?}", e)
 }
 
@@ -348,9 +353,14 @@ impl<'a> Firmware<'a> {
             riscv::register::mie::set_mext();
 
             // write csr: enable usb2 interrupts
+
+            #[cfg(feature = "cynthion_hw")]
             interrupt::enable(pac::Interrupt::USB2);
+            #[cfg(feature = "cynthion_hw")]
             interrupt::enable(pac::Interrupt::USB2_EP_CONTROL);
+            #[cfg(feature = "cynthion_hw")]
             interrupt::enable(pac::Interrupt::USB2_EP_IN);
+            #[cfg(feature = "cynthion_hw")]
             interrupt::enable(pac::Interrupt::USB2_EP_OUT);
 
             // enable usb2 interrupt events
