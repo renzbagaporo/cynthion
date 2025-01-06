@@ -18,6 +18,7 @@ use moondancer::event::InterruptEvent;
 use moondancer::usb::vendor::{VendorRequest, VendorValue};
 use moondancer::{hal, pac, util};
 
+#[cfg(feature = "cynthion_hw")]
 use pac::csr::interrupt;
 
 // - configuration ------------------------------------------------------------

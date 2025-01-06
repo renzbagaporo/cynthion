@@ -1,4 +1,6 @@
 use crate::hal::smolusb;
+
+#[cfg(feature = "cynthion_hw")]
 use pac::csr::interrupt;
 
 #[cfg(feature = "cynthion_hw")]

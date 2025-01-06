@@ -6,6 +6,9 @@ use zerocopy::{FromBytes, FromZeroes, Unaligned};
 
 use crate::{hal, pac};
 use hal::smolusb;
+
+
+#[cfg(feature = "cynthion_hw")]
 use pac::csr::interrupt;
 
 use smolusb::device::Speed;

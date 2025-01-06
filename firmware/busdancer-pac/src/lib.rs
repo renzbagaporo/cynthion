@@ -1,7 +1,5 @@
 #![no_std]
 
-pub mod csr;
-
 pub mod clock {
     const SYSTEM_CLOCK_FREQUENCY: u32 = 500_000_000;
 
@@ -20,8 +18,3 @@ impl Peripherals {
         Self(imxrt_ral::Instances::instances())
     }
 }
-
-
-
-// mod generated;
-// pub use generated::*;
