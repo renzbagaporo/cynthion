@@ -13,6 +13,11 @@ lunasoc_hal::impl_serial! {
     Serial1: pac::UART1,
 }
 
+#[cfg(not(feature = "cynthion_hw"))]
+lunasoc_hal::impl_serial! {
+    Serial0: pac::UART,
+}
+
 #[cfg(feature = "cynthion_hw")]
 lunasoc_hal::impl_timer! {
     Timer0: pac::TIMER,

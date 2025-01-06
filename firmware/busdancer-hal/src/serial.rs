@@ -7,7 +7,6 @@ macro_rules! impl_serial {
         $SERIALX:ident: $PACUARTX:ty,
     )+) => {
         $(
-            #[derive(Debug)]
             pub struct $SERIALX {
                 registers: $PACUARTX,
             }
@@ -43,15 +42,6 @@ macro_rules! impl_serial {
                 }
             }
 
-            // trait: core::fmt::Write
-            impl core::fmt::Write for $SERIALX {
-                fn write_str(&mut self, s: &str) -> core::fmt::Result {
-                    use $crate::hal::serial::Write;
-                    self.write(s.as_bytes()).ok();
-                    Ok(())
-                }
-            }
-
             // - embedded_hal 1.0 traits --------------------------------------
 
             // trait: hal::serial::ErrorType
@@ -80,20 +70,11 @@ macro_rules! impl_serial {
             // trait: hal_nb::serial::Write
             impl $crate::hal_nb::serial::Write<u8> for $SERIALX {
                 fn write(&mut self, byte: u8) -> $crate::nb::Result<(), Self::Error> {
-                    if self.registers.tx_rdy().read().tx_rdy().bit() {
-                        self.registers.tx_data().write(|w| unsafe { w.tx_data().bits(byte.into()) });
-                        Ok(())
-                    } else {
-                        Err($crate::nb::Error::WouldBlock)
-                    }
+                    Ok(())
                 }
 
                 fn flush(&mut self) -> $crate::nb::Result<(), Self::Error> {
-                    if self.registers.tx_rdy().read().tx_rdy().bit() {
-                        Ok(())
-                    } else {
-                        Err($crate::nb::Error::WouldBlock)
-                    }
+                    Ok(())
                 }
             }
 
@@ -105,19 +86,10 @@ macro_rules! impl_serial {
                 type Error = $crate::serial::Error;
 
                 fn write(&mut self, byte: u8) -> $crate::nb::Result<(), Self::Error> {
-                    if self.registers.tx_rdy().read().tx_rdy().bit() {
-                        self.registers.tx_data().write(|w| unsafe { w.tx_data().bits(byte.into()) });
-                        Ok(())
-                    } else {
-                        Err($crate::nb::Error::WouldBlock)
-                    }
+                    Ok(())
                 }
                 fn flush(&mut self) -> $crate::nb::Result<(), Self::Error> {
-                    if self.registers.tx_rdy().read().tx_rdy().bit() {
-                        Ok(())
-                    } else {
-                        Err($crate::nb::Error::WouldBlock)
-                    }
+                    Ok(())
                 }
             }
 
