@@ -1,10 +1,10 @@
 //! This build script prepares the HAL build.
 
-use imxrt_rt::{Family, Memory, RuntimeBuilder};
+use riscv_rt::{Family, Memory, RuntimeBuilder};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     RuntimeBuilder::from_flexspi(Family::Imxrt1010, 16 * 1024 * 1024)
-        .flexram_banks(imxrt_rt::FlexRamBanks {
+        .flexram_banks(riscv_rt::FlexRamBanks {
             ocram: 1,
             itcm: 2,
             dtcm: 1,

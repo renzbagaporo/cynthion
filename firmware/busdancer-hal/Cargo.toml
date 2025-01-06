@@ -51,18 +51,12 @@ features = ["imxrt1010"]
 version = "0.6"
 features = ["imxrt1011"]
 
-[dependencies.imxrt-rt]
-version = "0.1.5"
-
 [dependencies.imxrt-boot-gen]
 features = ["imxrt1010"]
 version = "0.2"
 
-
-
 [patch.crates-io.imxrt-ral]
 git = "https://github.com/imxrt-rs/imxrt-ral"
-
 
 [patch.crates-io.imxrt-iomuxc]
 git = "https://github.com/imxrt-rs/imxrt-iomuxc"

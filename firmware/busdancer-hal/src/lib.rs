@@ -2,8 +2,6 @@
 #![allow(clippy::inline_always)]
 #![allow(clippy::must_use_candidate)]
 
-use imxrt_rt as _;
-
 // modules
 pub mod gpio;
 pub mod serial;
