@@ -27,5 +27,5 @@ debug = true
 debug-assertions = false
 incremental = false
 lto = true
-opt-level = "s"
+opt-level = 0
 overflow-checks = false

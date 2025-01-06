@@ -50,6 +50,10 @@ moondancer_pac = {version = "0.0.1", path = "../busdancer-pac", package="busdanc
 riscv = { version = "=0.7.7", features = ["critical-section-single-core"], package = "cortex-m" }
 riscv-rt = { package = "imxrt-rt", version = "0.1.5" }
 
+[dependencies.imxrt-ral]
+version = "0.6"
+features = ["imxrt1011"]
+
 [build-dependencies.riscv-rt]
 version = "0.1.5"
 package = "imxrt-rt"
