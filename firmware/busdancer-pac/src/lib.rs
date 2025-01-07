@@ -8,6 +8,7 @@ pub mod clock {
     }
 }
 
+use imxrt_ral::Instances;
 pub use imxrt_ral::{Interrupt, NVIC_PRIO_BITS};
 pub struct UART(pub imxrt_ral::lpuart::LPUART2);
 
@@ -61,12 +62,25 @@ impl USB2_EP_OUT {
         Self
     }
 }
-pub struct Peripherals(pub imxrt_ral::Instances);
+pub struct Peripherals
+{
+    peripherals : imxrt_ral::Instances,
+    pub USB2 : USB2,
+    pub USB2_EP_IN : USB2_EP_IN,
+    pub USB2_EP_CONTROL: USB2_EP_CONTROL,
+    pub USB2_EP_OUT : USB2_EP_OUT,
+}
 
 impl Peripherals {
     #[inline]
     pub fn take() -> Option<Self> {
-        Some(unsafe { Self(imxrt_ral::Instances::instances()) })
+        Some(unsafe { Self {
+            peripherals : Instances::instances(),
+            USB2 : USB2::steal(),
+            USB2_EP_IN : USB2_EP_IN::steal(),
+            USB2_EP_OUT : USB2_EP_OUT::steal(),
+            USB2_EP_CONTROL : USB2_EP_CONTROL::steal()
+        }  })
     }
 }
 

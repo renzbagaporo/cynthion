@@ -159,11 +159,9 @@ struct Firmware<'a> {
     #[cfg(feature = "cynthion_hw")]
     leds: pac::LEDS,
 
-    #[cfg(feature = "cynthion_hw")]
     usb2: hal::Usb2,
 
     // usb2 control endpoint
-    #[cfg(feature = "cynthion_hw")]
     usb2_control: Control<'a, hal::Usb2, LIBGREAT_MAX_COMMAND_SIZE>,
 
     // state
@@ -256,7 +254,6 @@ impl<'a> Firmware<'a> {
         };
 
         // usb2: control (host on r0.4)
-        #[cfg(feature = "cynthion_hw")]
         let usb2 = hal::Usb2::new(
             peripherals.USB2,
             peripherals.USB2_EP_CONTROL,
@@ -276,7 +273,6 @@ impl<'a> Firmware<'a> {
         // format bcdDevice
         let bcd_device: u16 = u16::from_be_bytes([board_major, board_minor]);
 
-        #[cfg(feature = "cynthion_hw")]
         let usb2_control = Control::<_, LIBGREAT_MAX_COMMAND_SIZE>::new(
             0,
             Descriptors {
@@ -315,9 +311,7 @@ impl<'a> Firmware<'a> {
         Self {
             #[cfg(feature = "cynthion_hw")]
             leds: peripherals.LEDS,
-            #[cfg(feature = "cynthion_hw")]
             usb2,
-            #[cfg(feature = "cynthion_hw")]
             usb2_control,
             libgreat_response: None,
             libgreat_response_last_error: None,
@@ -335,7 +329,6 @@ impl<'a> Firmware<'a> {
             .write(|w| unsafe { w.output().bits(1 << 2) });
 
         // connect usb2
-        #[cfg(feature = "cynthion_hw")]
         self.usb2.connect(DEVICE_SPEED);
         info!("Connected usb2 device");
 
@@ -360,7 +353,6 @@ impl<'a> Firmware<'a> {
             interrupt::enable(pac::Interrupt::USB2_EP_OUT);
 
             // enable usb2 interrupt events
-            #[cfg(feature = "cynthion_hw")]
             self.usb2.enable_events();
         }
 
@@ -426,7 +418,6 @@ impl<'a> Firmware<'a> {
                         | SendComplete(0)),
                     ) => {
                         trace!("Usb(Control, {:?})", event);
-                        #[cfg(feature = "cynthion_hw")]
                         if let Some(setup_packet) =
                             self.usb2_control.dispatch_event(&self.usb2, event)
                         {
