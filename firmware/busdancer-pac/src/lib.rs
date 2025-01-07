@@ -8,7 +8,7 @@ pub mod clock {
     }
 }
 
-pub use imxrt_ral::{interrupt, Interrupt, NVIC_PRIO_BITS};
+pub use imxrt_ral::{Interrupt, NVIC_PRIO_BITS};
 pub struct UART(pub imxrt_ral::lpuart::LPUART2);
 
 impl UART {
@@ -69,3 +69,6 @@ impl Peripherals {
         Some(unsafe { Self(imxrt_ral::Instances::instances()) })
     }
 }
+
+
+pub mod csr;

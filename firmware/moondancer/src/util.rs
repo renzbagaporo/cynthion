@@ -1,6 +1,5 @@
 use crate::hal::smolusb;
 
-#[cfg(feature = "cynthion_hw")]
 use pac::csr::interrupt;
 
 #[cfg(feature = "cynthion_hw")]
@@ -21,13 +20,15 @@ use ladybug::Channel;
 #[must_use]
 #[allow(clippy::cast_possible_truncation)]
 #[allow(clippy::too_many_lines)]
-#[cfg(feature = "cynthion_hw")]
 pub fn get_usb_interrupt_event() -> InterruptEvent {
     
     use crate::UsbInterface::{Aux, Control, Target};
 
     let usb0 = unsafe { hal::Usb0::summon() }; // target
+
+    #[cfg(feature = "cynthion_hw")]
     let usb1 = unsafe { hal::Usb1::summon() }; // aux
+    #[cfg(feature = "cynthion_hw")]
     let usb2 = unsafe { hal::Usb2::summon() }; // control
 
     let pending = match interrupt::pending() {
@@ -39,6 +40,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         // - usb0 interrupts - "target_phy" --
 
         // USB0 BusReset
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB0 => {
             ladybug::trace(Channel::A, Bit::B_IRQ_BUS_RESET, || {
                 usb0.controller
@@ -52,6 +54,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         }
 
         // USB0_EP_CONTROL ReceiveSetupPacket
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB0_EP_CONTROL => {
             ladybug::trace(Channel::B, Bit::B_IRQ_EP_CONTROL, || {
                 usb0.ep_control
@@ -75,6 +78,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         }
 
         // USB0_EP_IN SendComplete
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB0_EP_IN => ladybug::trace(Channel::B, Bit::B_IRQ_EP_IN, || {
             usb0.ep_in
                 .ev_pending()
@@ -89,6 +93,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         }),
 
         // USB0_EP_OUT ReceivePacket
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB0_EP_OUT => ladybug::trace(Channel::B, Bit::B_IRQ_EP_OUT, || {
             usb0.ep_out
                 .ev_pending()
@@ -163,6 +168,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         // - usb2 interrupts - "control_phy" (sideband on r0.4) --
 
         // USB2 BusReset
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB2 => {
             usb2.controller
                 .ev_pending()
@@ -174,6 +180,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         }
 
         // USB2_EP_CONTROL ReceiveControl
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB2_EP_CONTROL => {
             usb2.ep_control
                 .ev_pending()
@@ -195,6 +202,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         }
 
         // USB2_EP_IN SendComplete / NAK
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB2_EP_IN => {
             usb2.ep_in
                 .ev_pending()
@@ -209,6 +217,7 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
         }
 
         // USB2_EP_OUT ReceivePacket
+        #[cfg(feature = "cynthion_hw")]
         pac::Interrupt::USB2_EP_OUT => {
             usb2.ep_out
                 .ev_pending()
