@@ -9,7 +9,7 @@ pub mod clock {
 }
 
 use imxrt_ral::Instances;
-pub use imxrt_ral::{Interrupt, NVIC_PRIO_BITS};
+pub use imxrt_ral::{NVIC_PRIO_BITS};
 pub struct UART(pub imxrt_ral::lpuart::LPUART2);
 
 impl UART {
@@ -84,5 +84,14 @@ impl Peripherals {
     }
 }
 
+
+#[derive(Debug, Copy, Clone)]
+#[repr(u16)]
+pub enum Interrupt {
+    USB2 = 0,
+    USB2_EP_CONTROL = 1,
+    USB2_EP_IN = 2,
+    USB2_EP_OUT = 3,
+}
 
 pub mod csr;

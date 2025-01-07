@@ -18,7 +18,6 @@ use moondancer::event::InterruptEvent;
 use moondancer::usb::vendor::{VendorRequest, VendorValue};
 use moondancer::{hal, pac, util};
 
-#[cfg(feature = "cynthion_hw")]
 use pac::csr::interrupt;
 
 // - configuration ------------------------------------------------------------
@@ -343,13 +342,9 @@ impl<'a> Firmware<'a> {
 
             // write csr: enable usb2 interrupts
 
-            #[cfg(feature = "cynthion_hw")]
             interrupt::enable(pac::Interrupt::USB2);
-            #[cfg(feature = "cynthion_hw")]
             interrupt::enable(pac::Interrupt::USB2_EP_CONTROL);
-            #[cfg(feature = "cynthion_hw")]
             interrupt::enable(pac::Interrupt::USB2_EP_IN);
-            #[cfg(feature = "cynthion_hw")]
             interrupt::enable(pac::Interrupt::USB2_EP_OUT);
 
             // enable usb2 interrupt events
