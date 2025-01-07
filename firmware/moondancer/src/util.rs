@@ -24,11 +24,10 @@ pub fn get_usb_interrupt_event() -> InterruptEvent {
     
     use crate::UsbInterface::{Aux, Control, Target};
 
+    #[cfg(feature = "cynthion_hw")]
     let usb0 = unsafe { hal::Usb0::summon() }; // target
-
     #[cfg(feature = "cynthion_hw")]
     let usb1 = unsafe { hal::Usb1::summon() }; // aux
-    #[cfg(feature = "cynthion_hw")]
     let usb2 = unsafe { hal::Usb2::summon() }; // control
 
     let pending = match interrupt::pending() {

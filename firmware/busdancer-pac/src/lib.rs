@@ -23,9 +23,9 @@ impl core::fmt::Debug for UART {
         f.debug_struct("UART").finish()
     }
 }
-pub struct USB0(pub imxrt_ral::lpuart::LPUART1);
+pub struct USB2(pub imxrt_ral::lpuart::LPUART1);
 
-impl USB0 {
+impl USB2 {
     #[inline]
     pub const unsafe fn steal() -> Self {
         Self(imxrt_ral::lpuart::LPUART1::instance())
@@ -33,9 +33,9 @@ impl USB0 {
 }
 
 #[allow(non_camel_case_types)]
-pub struct USB0_EP_CONTROL;
+pub struct USB2_EP_CONTROL;
 
-impl USB0_EP_CONTROL {
+impl USB2_EP_CONTROL {
     #[inline]
     pub const unsafe fn steal() -> Self {
         Self
@@ -43,9 +43,9 @@ impl USB0_EP_CONTROL {
 }
 
 #[allow(non_camel_case_types)]
-pub struct USB0_EP_IN;
+pub struct USB2_EP_IN;
 
-impl USB0_EP_IN {
+impl USB2_EP_IN {
     #[inline]
     pub const unsafe fn steal() -> Self {
         Self
@@ -53,9 +53,9 @@ impl USB0_EP_IN {
 }
 
 #[allow(non_camel_case_types)]
-pub struct USB0_EP_OUT;
+pub struct USB2_EP_OUT;
 
-impl USB0_EP_OUT {
+impl USB2_EP_OUT {
     #[inline]
     pub const unsafe fn steal() -> Self {
         Self
