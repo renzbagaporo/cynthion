@@ -1,5 +1,4 @@
 #![no_std]
-
 pub mod clock {
     const SYSTEM_CLOCK_FREQUENCY: u32 = 500_000_000;
 
@@ -10,14 +9,12 @@ pub mod clock {
 }
 
 pub use imxrt_ral::{interrupt, Interrupt, NVIC_PRIO_BITS};
-
-
-pub struct UART(pub imxrt_ral::lpuart::LPUART1);
+pub struct UART(pub imxrt_ral::lpuart::LPUART2);
 
 impl UART {
     #[inline]
     pub const unsafe fn steal() -> Self {
-        Self(imxrt_ral::lpuart::LPUART1::instance())
+        Self(imxrt_ral::lpuart::LPUART2::instance())
     }
 }
 
@@ -26,7 +23,44 @@ impl core::fmt::Debug for UART {
         f.debug_struct("UART").finish()
     }
 }
+pub struct USB0(pub imxrt_ral::lpuart::LPUART1);
 
+impl USB0 {
+    #[inline]
+    pub const unsafe fn steal() -> Self {
+        Self(imxrt_ral::lpuart::LPUART1::instance())
+    }
+}
+
+#[allow(non_camel_case_types)]
+pub struct USB0_EP_CONTROL;
+
+impl USB0_EP_CONTROL {
+    #[inline]
+    pub const unsafe fn steal() -> Self {
+        Self
+    }
+}
+
+#[allow(non_camel_case_types)]
+pub struct USB0_EP_IN;
+
+impl USB0_EP_IN {
+    #[inline]
+    pub const unsafe fn steal() -> Self {
+        Self
+    }
+}
+
+#[allow(non_camel_case_types)]
+pub struct USB0_EP_OUT;
+
+impl USB0_EP_OUT {
+    #[inline]
+    pub const unsafe fn steal() -> Self {
+        Self
+    }
+}
 pub struct Peripherals(pub imxrt_ral::Instances);
 
 impl Peripherals {
